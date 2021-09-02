@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "cross-env DEBUG=mysql:server node server.js",
-    "dev": "cross-env DEBUG=mysql:server nodemon server.js"
+    "start": "cross-env NODE_ENV=production DEBUG=mysql:server node server.js",
+    "dev": "cross-env NODE_ENV=development DEBUG=mysql:server nodemon server.js"
   },
   "keywords": [],
   "author": "",
