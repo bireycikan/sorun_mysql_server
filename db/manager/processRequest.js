@@ -33,6 +33,29 @@ function processRequest(bodyData, callback) {
       callback(null, results);
     })
   }
+  else if (operation === 'UPDATE') {
+    let db_query = '';
+    if (!model.isMultiple) {
+      db_query += `UPDATE ${model.name} SET `
+
+      const fields = Object.keys(model.fields);
+      for (let i = 0; i < fields.length; i++) {
+        if (i === fields.length - 1) {
+          db_query += `${fields[i]}='${model.fields[fields[i]]}' WHERE ${model.id.name}=${model.id.value};`;
+        }
+        else {
+          db_query += `${fields[i]}='${model.fields[fields[i]]}', `;
+        }
+      }
+    }
+
+    conn.query(db_query, function (err, results) {
+      console.log(err)
+      if (err) return callback(err);
+
+      callback(null, results);
+    })
+  }
 }
 
 module.exports = processRequest;
