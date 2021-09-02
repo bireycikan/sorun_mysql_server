@@ -12,6 +12,9 @@ else dotenv.config({ path: path.join(__dirname, 'config/.env.development') });
 // initialize db manager
 const dbManager = require('./db/manager');
 
+// populate db with fake data
+dbManager.populateDb();
+
 
 const requestHandler = (request, response) => {
   if (request.method == 'POST') {
