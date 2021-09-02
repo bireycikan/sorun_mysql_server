@@ -1,6 +1,5 @@
 const path = require('path');
-const express = require('express');
-const app = express();
+const http = require('http');
 const debug = require('debug')('mysql:server');
 const dotenv = require('dotenv');
 
@@ -9,19 +8,33 @@ const dotenv = require('dotenv');
 if (process.env.NODE_ENV === 'production') dotenv.config({ path: path.join(__dirname, 'config/.env.production') });
 else dotenv.config({ path: path.join(__dirname, 'config/.env.development') });
 
-// connect to db
-const dbConnection = require('./db/connection')();
-dbConnection.connect((err) => {
-  if (err) {
-    return debug('Connection error: %o', err.stack);
+
+const requestHandler = (request, response) => {
+  if (request.method == 'POST') {
+    let body = '';
+    request.on('data', function (data) {
+      body += data;
+    });
+
+    request.on('end', () => {
+      try {
+        // body = JSON.parse(body);
+        response.writeHead(200).end(body)
+      }
+      catch (e) {
+        response.writeHead(400).end("Bad Request");
+      }
+    });
   }
+  else {
+    response.end("Request method must be POST");
+  }
+}
 
-  debug('Successfuly connected to DB...');
-})
 
+const server = http.createServer(requestHandler);
 
-
-const port = process.env.PORT || 3306;
-app.listen(port, () => {
+const port = 5433;
+server.listen(port, () => {
   debug(`MySql server is listening on port ${port}`);
 })
