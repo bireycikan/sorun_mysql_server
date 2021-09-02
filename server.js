@@ -9,6 +9,10 @@ if (process.env.NODE_ENV === 'production') dotenv.config({ path: path.join(__dir
 else dotenv.config({ path: path.join(__dirname, 'config/.env.development') });
 
 
+// initialize db manager
+const dbManager = require('./db/manager');
+
+
 const requestHandler = (request, response) => {
   if (request.method == 'POST') {
     let body = '';
@@ -18,8 +22,18 @@ const requestHandler = (request, response) => {
 
     request.on('end', () => {
       try {
-        // body = JSON.parse(body);
-        response.writeHead(200).end(body)
+        body = JSON.parse(body);
+        dbManager.processRequest(body, function (err, result) {
+          if (!err) {
+            return response
+              .writeHead(200, { 'Content-Type': 'application/json' })
+              .end(JSON.stringify(result));
+          }
+
+          response
+            .writeHead(400, { 'Content-Type': 'application/json' })
+            .end(err)
+        })
       }
       catch (e) {
         response.writeHead(400).end("Bad Request");
