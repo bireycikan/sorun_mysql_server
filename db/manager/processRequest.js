@@ -56,6 +56,14 @@ function processRequest(bodyData, callback) {
       callback(null, results);
     })
   }
+  else if (operation === "QUERY") {
+    conn.query(model.query, function (err, results) {
+      console.log(err)
+      if (err) return callback(err);
+
+      callback(null, results);
+    })
+  }
 }
 
 module.exports = processRequest;
